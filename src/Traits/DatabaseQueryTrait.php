@@ -80,14 +80,11 @@ trait DatabaseQueryTrait
      */
     protected function addWhere(Builder $query, string $key, string $extraValue): void
     {
-        if ($extraValue === 'NULL') {
-            $query->whereNull($key);
-        } elseif ($extraValue === 'NOT_NULL') {
-            $query->whereNotNull($key);
-        } elseif (str_starts_with($extraValue, '!')) {
-            $query->where($key, '!=', mb_substr($extraValue, 1));
-        } else {
-            $query->where($key, $extraValue);
-        }
+        match (true) {
+            $extraValue === 'NULL' => $query->whereNull($key),
+            $extraValue === 'NOT_NULL' => $query->whereNotNull($key),
+            str_starts_with($extraValue, '!') => $query->where($key, '!=', mb_substr($extraValue, 1)),
+            default => $query->where($key, $extraValue),
+        };
     }
 }

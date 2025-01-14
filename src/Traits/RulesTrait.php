@@ -11,36 +11,39 @@ trait RulesTrait
      */
     public function extractDatabaseRules(array $rules): void
     {
-        $rules = collect($rules)->mapWithKeys(function ($value, $key) {
-            return [str_replace('\.', $this->dotPlaceholder, $key) => $value];
-        })->toArray();
-
-        $this->initialRules = $rules;
-
+        $this->initialRules = $this->normalizeRules($rules);
         $this->rules = [];
 
-        // Separate Rules
-        $uniqueAndExistsRules = [];
-        $otherRules = [];
-        foreach ($rules as $key => $rule) {
-            $ruleParts = explode('|', $rule);
-            $filteredParts = array_filter($ruleParts, function ($part) use ($key, &$uniqueAndExistsRules) {
-                if (preg_match('/\b(unique|exists)\b/', $part)) {
-                    $uniqueAndExistsRules[$key][] = $part;
-
-                    return false;
-                }
-
-                return true;
-            });
-
-            if (! empty($filteredParts)) {
-                $otherRules[$key] = implode('|', $filteredParts);
-            }
-        }
+        [$uniqueAndExistsRules, $otherRules] = $this->separateRules($this->initialRules);
 
         $this->addRules($otherRules);
         $this->addDatabaseRules($uniqueAndExistsRules);
+    }
+
+    /**
+     * Separate unique and exists rules from other rules.
+     */
+    private function separateRules(array $rules): array
+    {
+        $uniqueAndExistsRules = [];
+        $otherRules = [];
+
+        foreach ($rules as $key => $rule) {
+            $ruleParts = is_string($rule) ? explode('|', $rule) : $rule;
+
+            $uniqueExists = array_filter($ruleParts, fn ($part) => preg_match('/\b(unique|exists)\b/', $part));
+            $others = array_diff($ruleParts, $uniqueExists);
+
+            if (! empty($uniqueExists)) {
+                $uniqueAndExistsRules[$key] = $uniqueExists;
+            }
+
+            if (! empty($others)) {
+                $otherRules[$key] = is_string($rule) ? implode('|', $others) : $others;
+            }
+        }
+
+        return [$uniqueAndExistsRules, $otherRules];
     }
 
     /**
@@ -48,14 +51,23 @@ trait RulesTrait
      */
     public function addDatabaseRules(array $rules): void
     {
-        // The primary purpose of this parser is to expand any "*" rules to the all
-        // of the explicit rules needed for the given data. For example the rule
-        // names.* would get expanded to names.0, names.1, etc. for this data.
-        $response = (new ValidationRuleParser($this->data))
-            ->explode(ValidationRuleParser::filterConditionalRules($rules, $this->data));
+        $parser = new ValidationRuleParser($this->data);
+        $response = $parser->explode(
+            ValidationRuleParser::filterConditionalRules($rules, $this->data)
+        );
 
         $this->databaseRules = $rules;
         $this->databaseRulesExpanded = $response->rules;
         $this->implicitDatabaseAttributes = $response->implicitAttributes;
+    }
+
+    /**
+     * Normalize the rules array by replacing dots with placeholders.
+     */
+    private function normalizeRules(array $rules): array
+    {
+        return collect($rules)->mapWithKeys(function ($value, $key) {
+            return [str_replace('\.', $this->dotPlaceholder, $key) => $value];
+        })->toArray();
     }
 }
