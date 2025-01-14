@@ -6,11 +6,14 @@ use DazzaDev\BatchValidation\BatchValidationServiceProvider;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Validator;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
 {
     public array $data;
+
+    public $validator;
 
     /**
      * Get package providers.
@@ -45,6 +48,15 @@ class TestCase extends OrchestraTestCase
         // Insert
         $randomIndex = array_rand($this->data);
         DB::table('contacts')->insert([$this->data[$randomIndex]]);
+
+        // Set the validator instance
+        $this->validator = Validator::make(
+            $this->data,
+            [
+                '*.document_number' => 'unique:contacts,document_number',
+                '*.email' => 'unique:contacts,email',
+            ]
+        );
     }
 
     /**
