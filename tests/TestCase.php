@@ -43,11 +43,10 @@ class TestCase extends OrchestraTestCase
         });
 
         // Set Data
-        $this->data = $this->loadData();
+        $this->loadData();
 
         // Insert
-        $randomIndex = array_rand($this->data);
-        DB::table('contacts')->insert([$this->data[$randomIndex]]);
+        DB::table('contacts')->insert($this->randomItem());
 
         // Set the validator instance
         $this->validator = Validator::make(
@@ -75,10 +74,9 @@ class TestCase extends OrchestraTestCase
     protected function loadData(): array
     {
         $faker = Faker::create();
-        $data = [];
 
         for ($i = 0; $i < 100; $i++) {
-            $data[] = [
+            $this->data[] = [
                 'document_number' => $faker->randomNumber(9),
                 'name' => $faker->name,
                 'email' => $faker->unique()->safeEmail,
@@ -86,6 +84,16 @@ class TestCase extends OrchestraTestCase
             ];
         }
 
-        return $data;
+        return $this->data;
+    }
+
+    /**
+     * Random Item.
+     */
+    protected function randomItem(): array
+    {
+        return [
+            $this->data[array_rand($this->data)],
+        ];
     }
 }
