@@ -25,11 +25,25 @@ class BatchValidationTest extends TestCase
     public function test_validation_solves_n_plus_one_problem()
     {
         DB::enableQueryLog();
-        $this->validator->validateInBatches(10);
+        $this->validator->validateInBatches();
         $fails = $this->validator->fails();
         $queries = DB::getQueryLog();
 
         $this->assertTrue($fails);
         $this->assertCount(20, $queries);
+    }
+
+    /**
+     * Test Validation batch size.
+     */
+    public function test_validation_batch_size()
+    {
+        DB::enableQueryLog();
+        $this->validator->validateInBatches(batchSize: 20);
+        $fails = $this->validator->fails();
+        $queries = DB::getQueryLog();
+
+        $this->assertTrue($fails);
+        $this->assertCount(10, $queries);
     }
 }

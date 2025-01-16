@@ -11,6 +11,11 @@ class BatchValidator extends Validator
     use BatchValidationTrait, RulesTrait;
 
     /**
+     * The batch size.
+     */
+    protected int $batchSize = 10;
+
+    /**
      * Allow use validation in batches.
      */
     protected bool $useBatchValidation = false;

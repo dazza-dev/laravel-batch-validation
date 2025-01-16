@@ -12,11 +12,6 @@ trait BatchValidationTrait
     use DatabaseQueryTrait;
 
     /**
-     * The batch size.
-     */
-    protected int $batchSize = 10;
-
-    /**
      * Validation In Batches.
      */
     public function validationInBatches(): bool

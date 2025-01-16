@@ -28,7 +28,8 @@ $validator = Validator::make($data, [
 ]);
 
 // Validate in Batches (this prevent n+1 problem)
-$validator->validateInBatches();
+// You can change the batch value (the default is 10).
+$validator->validateInBatches(batchSize: 10);
 
 // Validation fails
 if ($validator->fails()) {
