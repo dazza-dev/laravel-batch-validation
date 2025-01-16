@@ -28,12 +28,57 @@ $validator = Validator::make($data, [
 ]);
 
 // Validate in Batches (this prevent n+1 problem)
-// You can change the batch value (the default is 10).
-$validator->validateInBatches(batchSize: 10);
+$validator->validateInBatches();
 
 // Validation fails
 if ($validator->fails()) {
     throw new \Exception(json_encode($validator->errors()->messages()));
+}
+```
+
+## Batch Size
+
+You can change the batch size by passing the `batchSize` parameter to the `validateInBatches` method. The default batch size is 10.
+
+```php
+$validator->validateInBatches(batchSize: 20);
+```
+
+## Database Rules
+
+This package also supports database rules like `unique`, `exists`.
+
+```php
+$validator = Validator::make($data, [
+    '*.name' => 'required',
+    '*.email' => 'email:strict|unique:contacts,email',
+]);
+```
+
+## Form Request
+
+You can use the `validateInBatches` method in a form request.
+
+```php
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
+
+class StoreContactRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            '*.name' => 'required',
+            '*.email' => 'email:strict|unique:contacts,email',
+        ];
+    }
+
+    public function withValidator(Validator $validator)
+    {
+        if (method_exists($validator, 'validateInBatches')) {
+            $validator->validateInBatches(batchSize: 100);
+        }
+    }
 }
 ```
 
