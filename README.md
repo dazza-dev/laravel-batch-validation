@@ -86,11 +86,11 @@ class StoreContactRequest extends FormRequest
 
 ### Before using the package (N+1 problem)
 
-![Before Optimization](https://github.com/user-attachments/assets/569d6e11-014a-4527-a7f1-5817b9f4e4bf)
+![Before Optimization](https://github.com/user-attachments/assets/e1c8c3a6-d7eb-423b-8448-8d5cc6e2d968)
 
 ### After using the package (Optimized)
 
-![After Optimization](https://github.com/user-attachments/assets/dce9f96e-54dd-4d58-8ca3-cf51c6b59371)
+![After Optimization](https://github.com/user-attachments/assets/4c2353a1-4571-440c-90a4-d7221ec64a44)
 
 ## Contributions
 
