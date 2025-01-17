@@ -84,11 +84,11 @@ class StoreContactRequest extends FormRequest
 
 ## Before and After Optimization
 
-### Before using the package (N+1 problem)
+### Before using Laravel Batch Validation (N+1 problem)
 
 ![Before Optimization](https://github.com/user-attachments/assets/e1c8c3a6-d7eb-423b-8448-8d5cc6e2d968)
 
-### After using the package (Optimized)
+### After using Laravel Batch Validation (Optimized)
 
 ![After Optimization](https://github.com/user-attachments/assets/4c2353a1-4571-440c-90a4-d7221ec64a44)
 
