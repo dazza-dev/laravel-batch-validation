@@ -1,6 +1,6 @@
 {
   "name": "dazza-dev/laravel-batch-validation",
-  "description": "",
+  "description": "Batch validate arrays in Laravel and optimize database unique rules using whereIn to avoid N+1 query issues.",
   "keywords": [
     "batch",
     "validation",
