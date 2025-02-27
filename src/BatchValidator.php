@@ -51,6 +51,26 @@ class BatchValidator extends Validator
     }
 
     /**
+     * Returns the data which was valid.
+     */
+    public function valid(): array
+    {
+        if (! $this->messages) {
+            $this->passes();
+        }
+
+        //
+        if ($this->useBatchValidation) {
+            $this->validationInBatches();
+        }
+
+        return array_diff_key(
+            $this->data,
+            $this->attributesThatHaveMessages()
+        );
+    }
+
+    /**
      * Determine if the data fails the validation rules.
      */
     public function fails(): bool
