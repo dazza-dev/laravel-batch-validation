@@ -60,14 +60,4 @@ trait RulesTrait
         $this->databaseRulesExpanded = $response->rules;
         $this->implicitDatabaseAttributes = $response->implicitAttributes;
     }
-
-    /**
-     * Normalize the rules array by replacing dots with placeholders.
-     */
-    private function normalizeRules(array $rules): array
-    {
-        return collect($rules)->mapWithKeys(function ($value, $key) {
-            return [str_replace('\.', $this->dotPlaceholder, $key) => $value];
-        })->toArray();
-    }
 }

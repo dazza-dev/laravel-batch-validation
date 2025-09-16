@@ -86,4 +86,14 @@ class BatchValidator extends Validator
             return ! $passes;
         }
     }
+
+    /**
+     * Normalize the rules array by replacing dots with placeholders.
+     */
+    private function normalizeRules(array $rules): array
+    {
+        return collect($rules)->mapWithKeys(function ($value, $key) {
+            return [str_replace('\.', '__dot__'.static::$placeholderHash, $key) => $value];
+        })->toArray();
+    }
 }
